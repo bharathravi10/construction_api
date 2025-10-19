@@ -15,7 +15,28 @@ export class User {
   password!: string;
 
   @Prop({ type: Types.ObjectId, ref: Role.name, required: true })
-  role!: Role;
+  role!: Types.ObjectId;
+
+  @Prop({ required: true, unique: true })
+  mobile!: string;
+
+  @Prop()
+  dob?: string; // Date of birth
+
+  @Prop()
+  profileImage?: string; // URL or path to image
+
+  @Prop()
+  address?: string;
+
+  @Prop()
+  name?: string;
+
+  @Prop({ default: true })
+  is_active!: boolean;
+
+  @Prop({ default: false })
+  is_deleted!: boolean;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
@@ -28,6 +49,7 @@ UserSchema.pre<UserDocument>('save', async function (next) {
   next();
 });
 
+// Method to compare password
 UserSchema.methods.comparePassword = async function (plainPassword: string) {
   return bcrypt.compare(plainPassword, this.password);
 };
