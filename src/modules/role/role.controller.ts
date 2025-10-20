@@ -8,13 +8,16 @@ import {
   Post, 
   HttpException, 
   HttpStatus,
-  Logger
+  Logger,
+  UseGuards
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody } from '@nestjs/swagger';
 import { RolesService } from './role.service';
 import { Role } from '../../common/schemas/role.schema';
 import { CreateRoleDto, UpdateRoleDto } from './role.dto';
+import { AuthGuard } from '@nestjs/passport';
 
+// @UseGuards(AuthGuard('jwt'))
 @ApiTags('Roles')
 @Controller('roles')
 export class RolesController {
