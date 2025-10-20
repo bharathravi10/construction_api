@@ -1,6 +1,7 @@
 // users/user.dto.ts
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty, IsOptional, IsString, IsDate, IsBoolean } from 'class-validator';
+import { Types } from 'mongoose';
 
 export class CreateUserDto {
   @ApiProperty({ example: 'user@example.com' })
@@ -38,7 +39,7 @@ export class CreateUserDto {
 
   @ApiProperty({ example: 'role_id_here' })
   @IsNotEmpty()
-  role!: string;
+  role!:  Types.ObjectId;
 
   @ApiProperty({ default: true, required: false })
   @IsOptional()
@@ -83,7 +84,7 @@ export class UpdateUserDto {
 
   @ApiProperty({ example: 'role_id_here', required: false })
   @IsOptional()
-  role?: string;
+  role?:  Types.ObjectId;
 
   @ApiProperty({ example: true, required: false })
   @IsOptional()

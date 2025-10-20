@@ -23,7 +23,7 @@ export class UsersService {
         throw new ConflictException('Email or mobile already exists');
       }
 
-      const createdUser = new this.userModel(createUserDto);
+      const createdUser = new this.userModel({...createUserDto,role:new Types.ObjectId(createUserDto.role)});
       await createdUser.save();
       return { message: 'User successfully created' };
     } catch (error: unknown) {
@@ -58,7 +58,7 @@ export class UsersService {
     try {
       const user = await this.userModel
         .findOne({ _id: id, is_deleted: false })
-        .select('_id name email mobile role is_active dob profileImage address')
+        .select('_id name email mobile role is_active dob profileImage address').populate('role')
         .exec();
 
       if (!user) throw new NotFoundException(`User not found`);
@@ -92,7 +92,7 @@ export class UsersService {
         if (conflictCheck) throw new ConflictException('Email or mobile already exists');
       }
 
-      await this.userModel.findByIdAndUpdate(id, updateUserDto, { new: true }).exec();
+      await this.userModel.findByIdAndUpdate(id, {...updateUserDto,role:new Types.ObjectId(updateUserDto.role)}, { new: true }).exec();
       this.logger.log(`User updated: ${id}`);
       return { message: 'User successfully updated' };
     } catch (error: unknown) {
