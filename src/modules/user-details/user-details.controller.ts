@@ -1,9 +1,11 @@
 // users/users.controller.ts
-import { Body, Controller, Delete, Get, Param, Patch, Post, HttpException, HttpStatus } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody } from '@nestjs/swagger';
 import { CreateUserDto, UpdateUserDto } from './user-details.dto';
 import { UsersService } from './user-details.service';
+import { AuthGuard } from '@nestjs/passport';
 
+// @UseGuards(AuthGuard('jwt'))
 @ApiTags('Users')
 @Controller('users')
 export class UsersController {
