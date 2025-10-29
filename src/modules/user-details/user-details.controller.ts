@@ -1,7 +1,7 @@
 // users/users.controller.ts
-import { Body, Controller, Delete, Get, Param, Patch, Post, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, HttpException, HttpStatus, UseGuards, HttpCode } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody } from '@nestjs/swagger';
-import { CreateUserDto, UpdateUserDto } from './user-details.dto';
+import { CreateUserDto, UpdateUserDto, AssignProjectsDto, RemoveProjectDto } from './user-details.dto';
 import { UsersService } from './user-details.service';
 import { AuthGuard } from '@nestjs/passport';
 
@@ -12,8 +12,11 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
+  @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Create a new user' })
   @ApiResponse({ status: 201, description: 'User successfully created.' })
+  @ApiResponse({ status: 400, description: 'Bad request - Invalid input data.' })
+  @ApiResponse({ status: 409, description: 'Conflict - Email or mobile already exists.' })
   @ApiBody({ type: CreateUserDto })
   async create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
@@ -46,5 +49,23 @@ export class UsersController {
   @ApiParam({ name: 'id', description: 'User ID' })
   async remove(@Param('id') id: string) {
     return this.usersService.remove(id);
+  }
+
+  @Post(':id/projects/assign')
+  @ApiOperation({ summary: 'Assign multiple projects to a user (adds to existing projects)' })
+  @ApiParam({ name: 'id', description: 'User ID' })
+  @ApiBody({ type: AssignProjectsDto })
+  @ApiResponse({ status: 200, description: 'Projects successfully assigned to user.' })
+  async assignProjects(@Param('id') userId: string, @Body() assignProjectsDto: AssignProjectsDto) {
+    return this.usersService.assignProjects(userId, assignProjectsDto);
+  }
+
+  @Delete(':id/projects/remove')
+  @ApiOperation({ summary: 'Remove a project from a user' })
+  @ApiParam({ name: 'id', description: 'User ID' })
+  @ApiBody({ type: RemoveProjectDto })
+  @ApiResponse({ status: 200, description: 'Project successfully removed from user.' })
+  async removeProject(@Param('id') userId: string, @Body() removeProjectDto: RemoveProjectDto) {
+    return this.usersService.removeProject(userId, removeProjectDto);
   }
 }
