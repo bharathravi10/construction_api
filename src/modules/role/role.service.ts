@@ -12,14 +12,35 @@ export class RolesService {
 
     async create(createRoleDto: CreateRoleDto): Promise<{ message: string }> {
         try {
-            // Check if a role with the same name already exists and is not deleted
+            // Check if a role with the same name exists and is not soft-deleted
             const existingRole = await this.roleModel.findOne({
                 name: createRoleDto.name,
                 is_deleted: false
             }).exec();
 
             if (existingRole) {
-                throw new Error(`Role already exists`);
+                // Role exists and is not soft-deleted, check if it's active or inactive
+                if (existingRole.is_active === true) {
+                    throw new ConflictException(`Role with name '${createRoleDto.name}' already exists and is active`);
+                } else {
+                    throw new ConflictException(`Role with name '${createRoleDto.name}' already exists but is inactive`);
+                }
+            }
+
+            // If a soft-deleted role with the same name exists, restore it
+            const softDeletedRole = await this.roleModel.findOne({
+                name: createRoleDto.name,
+                is_deleted: true
+            }).exec();
+
+            if (softDeletedRole) {
+                // Restore the soft-deleted role
+                await this.roleModel.findByIdAndUpdate(softDeletedRole._id, {
+                    ...createRoleDto,
+                    is_deleted: false,
+                    is_active: true
+                }).exec();
+                return { message: 'Role restored successfully' };
             }
 
             const createdRole = new this.roleModel(createRoleDto);
