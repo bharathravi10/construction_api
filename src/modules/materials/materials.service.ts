@@ -54,7 +54,7 @@ export class MaterialsService {
     }
   }
 
-  async findAll(filters?: { projectId?: string; category?: string; deliveryStatus?: string }): Promise<Partial<Material>[]> {
+  async findAll(filters?: { projectId?: string; category?: string; deliveryStatus?: string }): Promise<any[]> {
     try {
       const query: any = { is_deleted: false };
 
@@ -104,7 +104,7 @@ export class MaterialsService {
     }
   }
 
-  async findOne(id: string): Promise<Partial<Material>> {
+  async findOne(id: string): Promise<any> {
     try {
       const material = await this.materialModel
         .findOne({ _id: id, is_deleted: false })
@@ -255,6 +255,10 @@ export class MaterialsService {
         .select('-createdAt -updatedAt -__v -is_deleted')
         .exec();
 
+      if (!updatedMaterial) {
+        throw new NotFoundException('Material not found or deleted');
+      }
+
       this.logger.log(`Material usage updated: ${id} - Added ${newUsageAmount}, Total: ${updatedUsedQuantity}`);
       return updatedMaterial.toObject();
     } catch (error: unknown) {
@@ -293,6 +297,10 @@ export class MaterialsService {
         )
         .select('-createdAt -updatedAt -__v -is_deleted')
         .exec();
+
+      if (!updatedMaterial) {
+        throw new NotFoundException('Material not found or deleted');
+      }
 
       this.logger.log(`Material delivery status updated: ${id}`);
       return updatedMaterial.toObject();
@@ -380,6 +388,10 @@ export class MaterialsService {
         )
         .select('-createdAt -updatedAt -__v -is_deleted')
         .exec();
+
+      if (!updatedMaterial) {
+        throw new NotFoundException('Material not found or deleted');
+      }
 
       this.logger.log(`Material insufficient status updated: ${id} to ${updateInsufficientDto.isInsufficient}`);
       return updatedMaterial.toObject();
