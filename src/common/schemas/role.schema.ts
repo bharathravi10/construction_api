@@ -6,6 +6,9 @@ export type RoleDocument = Role & Document;
 
 @Schema({ timestamps: true, collection: 'roles' })
 export class Role {
+  @Prop()
+  _id?: Types.ObjectId;
+
   @Prop({ required: true, unique: true })
   name!: string;
 
