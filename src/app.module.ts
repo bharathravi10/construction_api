@@ -26,6 +26,7 @@ import { MaterialsModule } from './modules/materials/materials.module';
     RolesModule,
     UserDetailsModule,
     MaterialsModule,
+    AuthModule,
   ],
 })
 export class AppModule {}
