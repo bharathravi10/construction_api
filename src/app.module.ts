@@ -5,6 +5,8 @@ import configuration from './config/configuration';
 import { RolesModule } from './modules/role/role.module';
 import { UserDetailsModule } from './modules/user-details/user-details.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { ProjectsModule } from './modules/projects/projects.module';
+import { MaterialsModule } from './modules/materials/materials.module';
 
 @Module({
   imports: [
@@ -19,8 +21,11 @@ import { AuthModule } from './modules/auth/auth.module';
         // mongoose options can be added here
       }),
     }),
+    AuthModule,
+    ProjectsModule,
     RolesModule,
     UserDetailsModule,
+    MaterialsModule,
     AuthModule,
   ],
 })

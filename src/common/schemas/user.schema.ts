@@ -3,6 +3,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import { Role, RoleDocument } from './role.schema';
+import { Project, ProjectDocument } from './projects.schema';
 
 export type UserDocument = User & Document;
 
@@ -14,8 +15,11 @@ export class User {
   @Prop({ required: true })
   password!: string;
 
-  @Prop({ type: Types.ObjectId, ref: Role.name, required: true })
+  @Prop({ type: Types.ObjectId, ref: 'Role', required: true })
   role!: Types.ObjectId | RoleDocument;
+
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'Project' }], default: [] })
+  projects!: Types.ObjectId[] | ProjectDocument[];
 
   @Prop({ required: true, unique: true })
   mobile!: string;

@@ -4,7 +4,7 @@ import { Document, Types } from 'mongoose';
 
 export type RoleDocument = Role & Document;
 
-@Schema({ timestamps: true })
+@Schema({ timestamps: true, collection: 'roles' })
 export class Role {
   @Prop()
   _id?: Types.ObjectId;
