@@ -470,8 +470,9 @@ export class TasksService {
 
       const updatePath: any = {};
       Object.keys(updateIssueDto.issue).forEach(key => {
-        if (updateIssueDto.issue[key] !== undefined) {
-          updatePath[`issues.${updateIssueDto.issueIndex}.${key}`] = updateIssueDto.issue[key];
+        const typedKey = key as keyof typeof updateIssueDto.issue;
+        if (updateIssueDto.issue[typedKey] !== undefined) {
+          updatePath[`issues.${updateIssueDto.issueIndex}.${typedKey}`] = updateIssueDto.issue[typedKey];
         }
       });
 
