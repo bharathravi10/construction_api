@@ -105,9 +105,12 @@ export class TasksController {
     @Param('issueIndex') issueIndex: string,
     @Body() updateIssueDto: UpdateIssueInTaskDto
   ) {
-    // Override issueIndex from body with the one from URL
-    updateIssueDto.issueIndex = parseInt(issueIndex, 10);
-    return this.tasksService.updateIssue(id, updateIssueDto);
+    // Create new object with issueIndex from URL
+    const updateDto: UpdateIssueInTaskDto = {
+      issueIndex: parseInt(issueIndex, 10),
+      issue: updateIssueDto.issue
+    };
+    return this.tasksService.updateIssue(id, updateDto);
   }
 
   @Delete(':id/issues/:issueIndex')
