@@ -8,6 +8,9 @@ import { AuthModule } from './modules/auth/auth.module';
 import { ProjectsModule } from './modules/projects/projects.module';
 import { MaterialsModule } from './modules/materials/materials.module';
 import { TasksModule } from './modules/tasks/tasks.module';
+import { AttendanceModule } from './modules/attendance/attendance.module';
+import { SalaryModule } from './modules/salary/salary.module';
+import { DashboardModule } from './modules/dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -28,6 +31,9 @@ import { TasksModule } from './modules/tasks/tasks.module';
     UserDetailsModule,
     MaterialsModule,
     TasksModule,
+    AttendanceModule,
+    SalaryModule,
+    DashboardModule,
   ],
 })
 export class AppModule {}
