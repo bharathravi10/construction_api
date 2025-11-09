@@ -262,11 +262,17 @@ export class SalaryService {
 
       if (existingCalculation && calculateSalaryDto.forceRecalculate) {
         // Update existing calculation
-        calculation = await this.salaryCalculationModel.findOneAndUpdate(
+        const updatedCalculation = await this.salaryCalculationModel.findOneAndUpdate(
           { _id: existingCalculation._id },
           { $set: calculationData },
           { new: true }
         ).exec();
+        
+        if (!updatedCalculation) {
+          throw new NotFoundException('Salary calculation not found for update');
+        }
+        
+        calculation = updatedCalculation;
       } else {
         // Create new calculation
         calculation = new this.salaryCalculationModel(calculationData);
@@ -589,11 +595,13 @@ export class SalaryService {
       const query: any = { is_deleted: false };
 
       if (filters?.userId) {
-        query.user = new Types.ObjectId(filters.userId);
+        const userId = typeof filters.userId === 'string' ? filters.userId : filters.userId.toString();
+        query.user = new Types.ObjectId(userId);
       }
 
       if (filters?.projectId) {
-        query.project = filters.projectId === 'null' ? null : new Types.ObjectId(filters.projectId);
+        const projectId = typeof filters.projectId === 'string' ? filters.projectId : filters.projectId.toString();
+        query.project = projectId === 'null' ? null : new Types.ObjectId(projectId);
       }
 
       if (filters?.periodType) {

@@ -108,13 +108,14 @@ export class SalaryController {
     @Query('endDate') endDate?: string,
     @Query('status') status?: string
   ) {
-    const filters: GetSalaryCalculationDto = {};
-    if (userId) filters.userId = userId as any;
-    if (projectId) filters.projectId = projectId as any;
-    if (periodType) filters.periodType = periodType as any;
-    if (startDate) filters.startDate = startDate;
-    if (endDate) filters.endDate = endDate;
-    if (status) filters.status = status as any;
+    const filters: GetSalaryCalculationDto = {
+      ...(userId && { userId: userId as any }),
+      ...(projectId && { projectId: projectId as any }),
+      ...(periodType && { periodType: periodType as any }),
+      ...(startDate && { startDate }),
+      ...(endDate && { endDate }),
+      ...(status && { status: status as any }),
+    };
     return this.salaryService.getSalaryCalculations(filters);
   }
 
