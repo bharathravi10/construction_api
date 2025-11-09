@@ -224,8 +224,11 @@ export class ProjectService {
         })
         .exec();
 
-      // Filter out users who don't have Client role
-      return clients.filter(user => user.role && (user.role as any).name === 'Client');
+      // Filter out users who don't have Client role (defensive check - populate already filters)
+      return clients.filter(user => {
+        const role = user.role;
+        return role && typeof role === 'object' && 'name' in role && role.name === 'Client';
+      });
     } catch (error: unknown) {
       if (error instanceof Error) {
         this.logger.error(`Failed to fetch clients for project ${projectId}`, error.stack);
