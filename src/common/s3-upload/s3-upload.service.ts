@@ -41,7 +41,7 @@ export class S3UploadService {
   async uploadFile(
     file: Express.Multer.File,
     folder: string = 'uploads',
-  ): Promise<{ url: string; key: string }> {
+  ): Promise<{ url: string; key: string; originalName: string }> {
     this.validateFile(file);
     this.validateBucket();
 
@@ -57,7 +57,7 @@ export class S3UploadService {
     await this.s3Client.send(uploadCommand);
     const url = this.getCloudFrontUrl(key);
 
-    return { url, key };
+    return { url, key, originalName: file.originalname };
   }
 
   async uploadMultipleFiles(

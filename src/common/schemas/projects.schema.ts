@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
+import { Document, Types, Schema as MongooseSchema } from 'mongoose';
+import { FileInfoSchemaDefinition, FileInfo } from './file-info.schema';
 
 export type ProjectDocument = Project & Document;
 
@@ -48,8 +49,8 @@ export class Project {
   @Prop({ type: Number, default: 0 })
   progressPercentage: number = 0; // Computed progress (%)
 
-  @Prop({ type: [String], default: [] })
-  documents: string[] = []; // URLs or file paths for uploaded docs
+  @Prop({ type: [FileInfoSchemaDefinition], default: [] })
+  documents: FileInfo[] = []; // File info array with url, key, and originalName
 
 
   @Prop({ type: String })

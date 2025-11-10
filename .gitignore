@@ -1,8 +1,40 @@
+# Dependencies
 node_modules
+package-lock.json
+
+# Build outputs
 dist
-*.log
+*.js.map
+*.d.ts
+*.d.ts.map
+*.tsbuildinfo
+
+# Compiled JavaScript files (except config files)
+src/**/*.js
+src/**/*.js.map
+
+# Environment variables
 .env
 .env.*
 .env.local
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS files
 .DS_Store
-*.tsbuildinfo
+Thumbs.db
+
+# IDE files
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# Test coverage
+coverage
+.nyc_output

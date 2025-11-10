@@ -8,13 +8,17 @@ import {
   Post, 
   HttpCode, 
   HttpStatus,
-  Query 
+  Query,
+  UseGuards
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiQuery } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiQuery, ApiBearerAuth } from '@nestjs/swagger';
 import { CreateSalaryRateDto, UpdateSalaryRateDto, CalculateSalaryDto, GetSalaryCalculationDto } from './salary.dto';
 import { SalaryService } from './salary.service';
+import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 
 @ApiTags('Salary')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @Controller('salary')
 export class SalaryController {
   constructor(private readonly salaryService: SalaryService) {}

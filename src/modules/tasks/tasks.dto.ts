@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsOptional, IsDateString, IsMongoId, IsEnum, IsBoolean, IsArray, IsNumber, ValidateNested, IsObject } from 'class-validator';
 import { Type } from 'class-transformer';
 import { Types } from 'mongoose';
+import { FileInfoDto } from '../../common/dto/file-info.dto';
 
 export class CreateIssueDto {
   @ApiProperty({ example: 'Material shortage' })
@@ -149,11 +150,12 @@ export class CreateTaskDto {
   @IsString()
   readonly remarks?: string;
 
-  @ApiProperty({ example: ['https://example.com/doc1.pdf'], required: false, type: [String] })
+  @ApiProperty({ example: [], required: false, type: [FileInfoDto], description: 'Array of document file info with url, key, and originalName' })
   @IsOptional()
   @IsArray()
-  @IsString({ each: true })
-  readonly documents?: string[];
+  @ValidateNested({ each: true })
+  @Type(() => FileInfoDto)
+  readonly documents?: FileInfoDto[];
 
   @ApiProperty({ example: [], required: false, type: [CreateIssueDto] })
   @IsOptional()

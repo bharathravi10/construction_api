@@ -1,9 +1,10 @@
 // users/schemas/user.schema.ts
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
+import { Document, Types, Schema as MongooseSchema } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import { Role, RoleDocument } from './role.schema';
 import { Project, ProjectDocument } from './projects.schema';
+import { FileInfoSchemaDefinition, FileInfo } from './file-info.schema';
 
 export type UserDocument = User & Document;
 
@@ -27,8 +28,8 @@ export class User {
   @Prop()
   dob?: string; // Date of birth
 
-  @Prop()
-  profileImage?: string; // URL or path to image
+  @Prop({ type: FileInfoSchemaDefinition })
+  profileImage?: FileInfo; // File info with url, key, and originalName
 
   @Prop()
   address?: string;

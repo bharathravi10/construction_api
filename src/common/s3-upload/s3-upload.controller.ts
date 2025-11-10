@@ -8,6 +8,7 @@
   UploadedFile,
   UploadedFiles,
   BadRequestException,
+  UseGuards,
 } from '@nestjs/common';
 import {
   FileInterceptor,
@@ -21,6 +22,7 @@ import {
   ApiConsumes,
   ApiBody,
   ApiParam,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { S3UploadService } from './s3-upload.service';
 import {
@@ -29,8 +31,11 @@ import {
   DeleteMultipleFilesDto,
   DeleteMultipleFilesResponseDto,
 } from './s3-upload.dto';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 
 @ApiTags('S3 Upload')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @Controller('s3-upload')
 export class S3UploadController {
   private static readonly MAX_FILES = 10;

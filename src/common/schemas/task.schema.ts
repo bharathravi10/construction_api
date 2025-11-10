@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types, Schema as MongooseSchema } from 'mongoose';
+import { FileInfoSchemaDefinition, FileInfo } from './file-info.schema';
 
 export type TaskDocument = Task & Document;
 
@@ -66,8 +67,8 @@ export class Task {
   @Prop()
   remarks?: string; // Additional notes
 
-  @Prop({ type: [String], default: [] })
-  documents: string[] = []; // URLs or file paths for uploaded documents
+  @Prop({ type: [FileInfoSchemaDefinition], default: [] })
+  documents: FileInfo[] = []; // File info array with url, key, and originalName
 
   @Prop({ default: true })
   isActive: boolean = true; // Soft delete or archive flag
