@@ -1,8 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, HttpCode, HttpStatus } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, Param, Patch, Post, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { CreateProjectDto, UpdateProjectDto } from './projects.dto'
 import { ProjectService } from './projects.service';
+import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+
 @ApiTags('Projects')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @Controller('projects')
 export class ProjectController {
   constructor(private readonly projectService: ProjectService) {}

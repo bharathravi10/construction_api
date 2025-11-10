@@ -1,6 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsOptional, IsNumber, IsDateString, IsMongoId, IsEnum, IsBoolean, IsArray } from 'class-validator';
+import { IsString, IsOptional, IsNumber, IsDateString, IsMongoId, IsEnum, IsBoolean, IsArray, ValidateNested, IsObject } from 'class-validator';
+import { Type } from 'class-transformer';
 import { Types } from 'mongoose';
+import { FileInfoDto } from '../../common/dto/file-info.dto';
 
 export class CreateMaterialDto {
   @ApiProperty({ example: 'Cement' })
@@ -77,15 +79,19 @@ export class CreateMaterialDto {
   @IsDateString()
   readonly actualDeliveryDate?: Date;
 
-  @ApiProperty({ example: 'https://example.com/invoice.pdf', required: false })
+  @ApiProperty({ type: FileInfoDto, required: false, description: 'Invoice file info with url, key, and originalName' })
   @IsOptional()
-  @IsString()
-  readonly invoiceUrl?: string;
+  @ValidateNested()
+  @Type(() => FileInfoDto)
+  @IsObject()
+  readonly invoiceUrl?: FileInfoDto;
 
-  @ApiProperty({ example: 'https://example.com/grn.pdf', required: false })
+  @ApiProperty({ type: FileInfoDto, required: false, description: 'GRN file info with url, key, and originalName' })
   @IsOptional()
-  @IsString()
-  readonly grnUrl?: string;
+  @ValidateNested()
+  @Type(() => FileInfoDto)
+  @IsObject()
+  readonly grnUrl?: FileInfoDto;
 
   @ApiProperty({ 
     enum: ['Pending', 'In Transit', 'Delivered', 'Partially Delivered', 'Cancelled'],
@@ -101,11 +107,12 @@ export class CreateMaterialDto {
   @IsNumber()
   readonly progressPercentage?: number;
 
-  @ApiProperty({ example: ['https://example.com/doc1.pdf'], required: false, type: [String] })
+  @ApiProperty({ example: [], required: false, type: [FileInfoDto], description: 'Array of document file info with url, key, and originalName' })
   @IsOptional()
   @IsArray()
-  @IsString({ each: true })
-  readonly documents?: string[];
+  @ValidateNested({ each: true })
+  @Type(() => FileInfoDto)
+  readonly documents?: FileInfoDto[];
 
   @ApiProperty({ example: 'Handle with care', required: false })
   @IsOptional()

@@ -11,14 +11,15 @@ import {
   Logger,
   UseGuards
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { RolesService } from './role.service';
 import { Role } from '../../common/schemas/role.schema';
 import { CreateRoleDto, UpdateRoleDto } from './role.dto';
-import { AuthGuard } from '@nestjs/passport';
+import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 
-// @UseGuards(AuthGuard('jwt'))
 @ApiTags('Roles')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @Controller('roles')
 export class RolesController {
   private readonly logger = new Logger(RolesController.name);

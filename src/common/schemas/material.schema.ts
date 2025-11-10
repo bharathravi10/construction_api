@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
+import { Document, Types, Schema as MongooseSchema } from 'mongoose';
+import { FileInfoSchemaDefinition, FileInfo } from './file-info.schema';
 
 export type MaterialDocument = Material & Document;
 
@@ -47,11 +48,11 @@ export class Material {
   @Prop({ type: Date })
   actualDeliveryDate?: Date; // Actual delivery date
 
-  @Prop({ type: String })
-  invoiceUrl?: string; // URL or path to invoice file
+  @Prop({ type: FileInfoSchemaDefinition })
+  invoiceUrl?: FileInfo; // File info with url, key, and originalName
 
-  @Prop({ type: String })
-  grnUrl?: string; // URL or path to GRN (Goods Received Note)
+  @Prop({ type: FileInfoSchemaDefinition })
+  grnUrl?: FileInfo; // File info with url, key, and originalName
 
   @Prop({ default: 'Pending', enum: ['Pending', 'In Transit', 'Delivered', 'Partially Delivered', 'Cancelled'] })
   deliveryStatus: string = 'Pending'; // Delivery tracking status
@@ -59,8 +60,8 @@ export class Material {
   @Prop({ default: 0 })
   progressPercentage: number = 0; // Progress tracking for material usage
 
-  @Prop({ type: [String], default: [] })
-  documents: string[] = []; // URLs or file paths for uploaded documents
+  @Prop({ type: [FileInfoSchemaDefinition], default: [] })
+  documents: FileInfo[] = []; // File info array with url, key, and originalName
 
   @Prop()
   remarks?: string; // Additional notes

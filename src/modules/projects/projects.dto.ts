@@ -1,5 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsOptional, IsNumber, IsDateString, IsMongoId, IsEnum, IsBoolean, IsArray } from 'class-validator';
+import { IsString, IsOptional, IsNumber, IsDateString, IsMongoId, IsEnum, IsBoolean, IsArray, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
+import { FileInfoDto } from '../../common/dto/file-info.dto';
 
 export class CreateProjectDto {
   @ApiProperty()
@@ -61,11 +63,12 @@ export class CreateProjectDto {
   @IsNumber()
   readonly progressPercentage?: number;
 
-  @ApiProperty({ required: false, type: [String], default: [] })
+  @ApiProperty({ required: false, type: [FileInfoDto], default: [], description: 'Array of document file info with url, key, and originalName' })
   @IsOptional()
   @IsArray()
-  @IsString({ each: true })
-  readonly documents?: string[];
+  @ValidateNested({ each: true })
+  @Type(() => FileInfoDto)
+  readonly documents?: FileInfoDto[];
 
   @ApiProperty({ required: false })
   @IsOptional()

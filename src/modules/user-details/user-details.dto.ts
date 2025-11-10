@@ -1,7 +1,9 @@
 // users/user.dto.ts
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, IsOptional, IsString, IsDate, IsBoolean, IsArray, IsMongoId } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional, IsString, IsDate, IsBoolean, IsArray, IsMongoId, ValidateNested, IsObject } from 'class-validator';
+import { Type } from 'class-transformer';
 import { Types } from 'mongoose';
+import { FileInfoDto } from '../../common/dto/file-info.dto';
 
 export class CreateUserDto {
   @ApiProperty({ example: 'user@example.com' })
@@ -27,10 +29,12 @@ export class CreateUserDto {
   @IsString()
   dob?: string;
 
-  @ApiProperty({ example: 'http://example.com/profile.jpg', required: false })
+  @ApiProperty({ type: FileInfoDto, required: false, description: 'Profile image file info with url, key, and originalName' })
   @IsOptional()
-  @IsString()
-  profileImage?: string;
+  @ValidateNested()
+  @Type(() => FileInfoDto)
+  @IsObject()
+  profileImage?: FileInfoDto;
 
   @ApiProperty({ example: '123 Main St, City, Country', required: false })
   @IsOptional()
@@ -82,10 +86,12 @@ export class UpdateUserDto {
   @IsString()
   dob?: string;
 
-  @ApiProperty({ example: 'http://example.com/profile.jpg', required: false })
+  @ApiProperty({ type: FileInfoDto, required: false, description: 'Profile image file info with url, key, and originalName' })
   @IsOptional()
-  @IsString()
-  profileImage?: string;
+  @ValidateNested()
+  @Type(() => FileInfoDto)
+  @IsObject()
+  profileImage?: FileInfoDto;
 
   @ApiProperty({ example: '123 Main St, City, Country', required: false })
   @IsOptional()

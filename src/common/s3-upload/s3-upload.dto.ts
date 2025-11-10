@@ -7,8 +7,8 @@ export class UploadFileResponseDto {
   @ApiProperty({ description: 'S3 key of the uploaded file' })
   key!: string;
 
-  @ApiProperty({ description: 'Original filename', required: false })
-  originalName?: string;
+  @ApiProperty({ description: 'Original filename' })
+  originalName!: string;
 }
 
 export class UploadMultipleFilesResponseDto {
