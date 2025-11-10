@@ -8,14 +8,20 @@
   UploadedFile,
   UploadedFiles,
   BadRequestException,
-  Logger,
 } from '@nestjs/common';
 import {
   FileInterceptor,
   FilesInterceptor,
   FileFieldsInterceptor,
 } from '@nestjs/platform-express';
-import { ApiTags, ApiOperation, ApiResponse, ApiConsumes, ApiBody, ApiParam } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiConsumes,
+  ApiBody,
+  ApiParam,
+} from '@nestjs/swagger';
 import { S3UploadService } from './s3-upload.service';
 import {
   UploadFileResponseDto,
@@ -27,7 +33,7 @@ import {
 @ApiTags('S3 Upload')
 @Controller('s3-upload')
 export class S3UploadController {
-  private readonly logger = new Logger(S3UploadController.name);
+  private static readonly MAX_FILES = 10;
 
   constructor(private readonly s3UploadService: S3UploadService) {}
 
@@ -65,13 +71,11 @@ export class S3UploadController {
     if (!file) {
       throw new BadRequestException('No file provided');
     }
-
-    const result = await this.s3UploadService.uploadFile(file, folder);
-    return result;
+    return this.s3UploadService.uploadFile(file, folder);
   }
 
   @Post('multiple')
-  @UseInterceptors(FilesInterceptor('files', 10)) // Max 10 files
+  @UseInterceptors(FilesInterceptor('files', S3UploadController.MAX_FILES))
   @ApiOperation({ summary: 'Upload multiple files to S3' })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
@@ -105,7 +109,7 @@ export class S3UploadController {
     @UploadedFiles() files: Express.Multer.File[],
     @Body('folder') folder?: string,
   ): Promise<UploadMultipleFilesResponseDto> {
-    if (!files || files.length === 0) {
+    if (!files?.length) {
       throw new BadRequestException('No files provided');
     }
 
@@ -165,30 +169,28 @@ export class S3UploadController {
     },
     @Body('folder') folder?: string,
   ) {
-    const allFiles: Express.Multer.File[] = [];
-    const results: any = {};
+    const results: Record<string, any> = {};
+    let totalFiles = 0;
 
-    if (files.images) {
-      const imageResults = await this.s3UploadService.uploadMultipleFiles(
+    if (files.images?.length) {
+      results.images = await this.s3UploadService.uploadMultipleFiles(
         files.images,
         folder ? `${folder}/images` : 'images',
       );
-      results.images = imageResults;
-      allFiles.push(...files.images);
+      totalFiles += files.images.length;
     }
 
-    if (files.documents) {
-      const documentResults = await this.s3UploadService.uploadMultipleFiles(
+    if (files.documents?.length) {
+      results.documents = await this.s3UploadService.uploadMultipleFiles(
         files.documents,
         folder ? `${folder}/documents` : 'documents',
       );
-      results.documents = documentResults;
-      allFiles.push(...files.documents);
+      totalFiles += files.documents.length;
     }
 
     return {
       ...results,
-      totalFiles: allFiles.length,
+      totalFiles,
     };
   }
 
@@ -203,12 +205,10 @@ export class S3UploadController {
   async deleteMultipleFiles(
     @Body() deleteDto: DeleteMultipleFilesDto,
   ): Promise<DeleteMultipleFilesResponseDto> {
-    if (!deleteDto.keys || deleteDto.keys.length === 0) {
+    if (!deleteDto.keys?.length) {
       throw new BadRequestException('Keys array is required and cannot be empty');
     }
-
-    const result = await this.s3UploadService.deleteMultipleFiles(deleteDto.keys);
-    return result;
+    return this.s3UploadService.deleteMultipleFiles(deleteDto.keys);
   }
 
   @Delete(':key')
@@ -221,10 +221,8 @@ export class S3UploadController {
   @ApiResponse({ status: 200, description: 'File deleted successfully' })
   @ApiResponse({ status: 400, description: 'Bad request - Invalid key' })
   async deleteFile(@Param('key') key: string): Promise<{ message: string }> {
-    // Decode the key in case it's URL encoded
     const decodedKey = decodeURIComponent(key);
     await this.s3UploadService.deleteFile(decodedKey);
     return { message: 'File deleted successfully' };
   }
 }
-
