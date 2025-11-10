@@ -11,6 +11,7 @@ import { TasksModule } from './modules/tasks/tasks.module';
 import { AttendanceModule } from './modules/attendance/attendance.module';
 import { SalaryModule } from './modules/salary/salary.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
+import { S3UploadModule } from './common/s3-upload/s3-upload.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { DashboardModule } from './modules/dashboard/dashboard.module';
     AttendanceModule,
     SalaryModule,
     DashboardModule,
+    S3UploadModule,
   ],
 })
 export class AppModule {}
