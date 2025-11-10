@@ -1,6 +1,6 @@
 // users/user.dto.ts
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, IsOptional, IsString, IsDate, IsBoolean } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional, IsString, IsDate, IsBoolean, IsArray, IsMongoId } from 'class-validator';
 import { Types } from 'mongoose';
 
 export class CreateUserDto {
@@ -40,6 +40,16 @@ export class CreateUserDto {
   @ApiProperty({ example: 'role_id_here' })
   @IsNotEmpty()
   role!:  Types.ObjectId;
+
+  @ApiProperty({ 
+    example: ['project_id_1', 'project_id_2'], 
+    required: false,
+    description: 'Array of project IDs to assign to the user'
+  })
+  @IsOptional()
+  @IsArray()
+  @IsMongoId({ each: true })
+  projects?: Types.ObjectId[];
 
   @ApiProperty({ default: true, required: false })
   @IsOptional()
@@ -86,8 +96,37 @@ export class UpdateUserDto {
   @IsOptional()
   role?:  Types.ObjectId;
 
+  @ApiProperty({ 
+    example: ['project_id_1', 'project_id_2'], 
+    required: false,
+    description: 'Array of project IDs to assign to the user'
+  })
+  @IsOptional()
+  @IsArray()
+  @IsMongoId({ each: true })
+  projects?: Types.ObjectId[];
+
   @ApiProperty({ example: true, required: false })
   @IsOptional()
   @IsBoolean()
   is_active?: boolean;
+}
+
+export class AssignProjectsDto {
+  @ApiProperty({ 
+    example: ['project_id_1', 'project_id_2'], 
+    description: 'Array of project IDs to assign to the user'
+  })
+  @IsArray()
+  @IsMongoId({ each: true })
+  projectIds!: Types.ObjectId[];
+}
+
+export class RemoveProjectDto {
+  @ApiProperty({ 
+    example: 'project_id_1', 
+    description: 'Project ID to remove from the user'
+  })
+  @IsMongoId()
+  projectId!: Types.ObjectId;
 }
